@@ -1,0 +1,41 @@
+# Render Blueprint for Handback: a single Node web service on the free plan.
+#
+# There is no persistent disk on purpose. The SQLite database and uploaded photos live in
+# HANDBACK_DATA_DIR on the instance's ephemeral filesystem, and the app seeds its sample
+# rentals again on every boot. So rentals, photos and inspections RESET on every redeploy
+# and whenever the free instance spins down after idling. That is fine for a demo; do not
+# treat this deployment as a system of record.
+services:
+  - type: web
+    name: handback
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: HANDBACK_DATA_DIR
+        value: /tmp/handback
+      - key: PAYPAL_ENVIRONMENT
+        value: SANDBOX
+      # Caps protect the API budget on the public demo.
+      - key: DEMO_DAILY_INSPECTION_LIMIT
+        value: "10"
+      - key: DEMO_DAILY_PHOTO_CHECK_LIMIT
+        value: "150"
+      # Secrets: set these in the Render dashboard; they are never stored in this file.
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CHANNEL3_API_KEY
+        sync: false
+      # The public https URL of this service, for example https://handback.onrender.com
+      - key: APP_ORIGIN
+        sync: false

@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+/*
+  Handback design tokens: a claims tag and condition report.
+  Warm paper, ink, one stamped red for damage, a green stamp for clear.
+  PayPal blue is reserved for money actions only.
+*/
+:root {
+  --paper: #ebe3d0;
+  --paper-deep: #ddd3ba;
+  --card: #f6f1e3;
+  --ink: #1c1a16;
+  --ink-soft: #5a5446;
+  --rule: #b9ae93;
+  --stamp-red: #b8281d;
+  --stamp-red-wash: #f0d3cb;
+  --clear-green: #1f6a46;
+  --clear-green-wash: #cfe0cf;
+  --amber-ink: #7a4f00;
+  --amber-wash: #efdcae;
+  --paypal-blue: #0a5fd6;
+  --paypal-blue-deep: #003087;
+  --focus: #0a5fd6;
+
+  /* Light table: the dark inspection surface (photo light table). */
+  --lt-bg: #0f0e0c;
+  --lt-raise: #1a1814;
+  --lt-line: #38342b;
+  --lt-text: #f0e9d8;
+  --lt-dim: #a8a08b;
+  --lt-scan: #ffd27a;
+  --lt-red: #ff6a58;
+  --lt-green: #62d9a3;
+
+  /* Money bar segments */
+  --seg-damage: var(--stamp-red);
+  --seg-fee: var(--ink);
+  --seg-release: var(--clear-green);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-quick: 150ms;
+  --dur-base: 220ms;
+  --dur-slam: 420ms;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-stamp: var(--stamp-red);
+  --color-stamp-wash: var(--stamp-red-wash);
+  --color-clear: var(--clear-green);
+  --color-clear-wash: var(--clear-green-wash);
+  --color-amber: var(--amber-ink);
+  --color-amber-wash: var(--amber-wash);
+  --color-pay: var(--paypal-blue);
+  --color-pay-deep: var(--paypal-blue-deep);
+
+  --font-display: var(--font-display-face), "Times New Roman", serif;
+  --font-sans: var(--font-body-face), system-ui, sans-serif;
+  --font-mono: var(--font-typewriter-face), "Courier New", monospace;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-body-face), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  /* faint paper fibre, no image files needed */
+  background-image: radial-gradient(rgba(28, 26, 22, 0.045) 1px, transparent 1px);
+  background-size: 5px 5px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display-face), serif;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Perforated ticket surface */
+.ticket {
+  --notch: 0.7rem;
+  position: relative;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.ticket-perf {
+  position: relative;
+  height: 0;
+  margin: 0 0.9rem;
+  border-top: 2px dashed var(--rule);
+}
+.ticket-perf::before,
+.ticket-perf::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--notch) * -1 - 1px);
+  width: calc(var(--notch) * 2);
+  height: calc(var(--notch) * 2);
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+}
+/* half circles cut into each edge of the tag */
+.ticket-perf::before {
+  left: calc(-0.9rem - var(--notch) - 1.5px);
+  clip-path: inset(0 0 0 50%);
+}
+.ticket-perf::after {
+  right: calc(-0.9rem - var(--notch) - 1.5px);
+  clip-path: inset(0 50% 0 0);
+}
+
+/* Rubber stamp, pressed slightly unevenly */
+.stamp {
+  display: inline-block;
+  font-family: var(--font-typewriter-face), monospace;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.7rem;
+  border: 3px double currentColor;
+  border-radius: 4px;
+  transform: rotate(var(--tilt, -4deg));
+  mix-blend-mode: multiply;
+  opacity: 0.92;
+  -webkit-mask-image: radial-gradient(circle at 20% 30%, #000 60%, rgba(0, 0, 0, 0.78) 100%);
+  mask-image: radial-gradient(circle at 20% 30%, #000 60%, rgba(0, 0, 0, 0.78) 100%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stamp-press {
+    animation: stamp-press 360ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+}
+@keyframes stamp-press {
+  0% {
+    transform: rotate(var(--tilt, -4deg)) scale(1.6);
+    opacity: 0;
+  }
+  70% {
+    transform: rotate(var(--tilt, -4deg)) scale(0.96);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--tilt, -4deg)) scale(1);
+    opacity: 0.92;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,388 @@
+/*
+  Renter flow motion and instrument styling. Tokens live in app/globals.css.
+  Every animation ends in its final, readable state, so the global
+  prefers-reduced-motion rule (which collapses durations) never hides content.
+*/
+
+/* ---------- Stamp slam ---------- */
+@keyframes hb-slam {
+  0% { transform: rotate(var(--tilt, -4deg)) scale(2.5); opacity: 0; }
+  40% { opacity: 0.95; }
+  60% { transform: rotate(var(--tilt, -4deg)) scale(0.93); opacity: 0.95; }
+  78% { transform: rotate(var(--tilt, -4deg)) scale(1.025); }
+  100% { transform: rotate(var(--tilt, -4deg)) scale(1); opacity: 0.92; }
+}
+.hb-slam {
+  animation: hb-slam var(--dur-slam) var(--ease-out) var(--d, 0ms) both;
+}
+@keyframes hb-thud {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(4px); }
+  65% { transform: translateY(-1px); }
+}
+.hb-thud {
+  animation: hb-thud 170ms ease-out 250ms both;
+}
+@keyframes hb-rise {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.hb-rise {
+  animation: hb-rise var(--dur-base) var(--ease-out) var(--d, 0ms) both;
+}
+
+/* ---------- Money bar ---------- */
+@keyframes hb-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.hb-bar {
+  position: relative;
+  display: flex;
+  height: 3.5rem;
+  border: 2px solid var(--ink);
+  background: var(--paper-deep);
+  overflow: hidden;
+}
+.hb-bar-hold {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: repeating-linear-gradient(135deg, var(--rule) 0 6px, var(--paper-deep) 6px 12px);
+  animation: hb-grow 650ms var(--ease-out) both;
+}
+.hb-seg {
+  position: relative;
+  height: 100%;
+  transform-origin: left;
+  animation: hb-grow 800ms var(--ease-out) var(--d, 0ms) both;
+  border-right: 2px solid var(--paper);
+}
+.hb-seg:last-child { border-right: 0; }
+.hb-seg-damage { background: var(--seg-damage); }
+.hb-seg-fee { background: var(--seg-fee); }
+.hb-seg-release { background: var(--seg-release); }
+.hb-overage {
+  border: 2px dashed var(--stamp-red);
+  background: repeating-linear-gradient(135deg, var(--stamp-red-wash) 0 5px, transparent 5px 10px);
+}
+
+/* ---------- Compare slider ---------- */
+.hb-cmp {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  touch-action: pan-y;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hb-stage {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  transition: transform 300ms var(--ease-out);
+}
+.hb-cmp img { -webkit-user-drag: none; }
+.hb-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  margin-left: -22px;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  outline-offset: -3px;
+}
+.hb-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--card);
+  box-shadow: 0 0 0 1px rgba(28, 26, 22, 0.55);
+}
+.hb-grip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.hb-handle:focus-visible .hb-grip { outline: 3px solid var(--focus); outline-offset: 2px; }
+.hb-tag {
+  position: absolute;
+  top: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  font-family: var(--font-typewriter-face), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--paper);
+  pointer-events: none;
+}
+
+/* Reticle: corner brackets that lock on, plus a ring that pings a few times. */
+@keyframes hb-lock {
+  from { transform: scale(2.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes hb-ping {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.hb-ret {
+  position: absolute;
+  pointer-events: none;
+  --bw: calc(2.5px / var(--zoom, 1));
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.95));
+  animation: hb-lock 400ms var(--ease-out) 150ms both;
+}
+.hb-ret i {
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+  border: 0 solid var(--ret, var(--stamp-red));
+}
+.hb-ret i:nth-child(1) { top: 0; left: 0; border-top-width: var(--bw); border-left-width: var(--bw); }
+.hb-ret i:nth-child(2) { top: 0; right: 0; border-top-width: var(--bw); border-right-width: var(--bw); }
+.hb-ret i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: var(--bw); border-left-width: var(--bw); }
+.hb-ret i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: var(--bw); border-right-width: var(--bw); }
+.hb-ret b {
+  position: absolute;
+  inset: 0;
+  border: var(--bw) solid var(--ret, var(--stamp-red));
+  border-radius: 50%;
+  opacity: 0;
+  animation: hb-ping 1.3s ease-out 600ms 3 both;
+}
+.hb-cmp:not(.is-in) .hb-ret,
+.hb-cmp:not(.is-in) .hb-ret b {
+  animation-play-state: paused;
+}
+.hb-note {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  border: 2px solid var(--stamp-red);
+  background: rgba(246, 241, 227, 0.96);
+  font-family: var(--font-typewriter-face), monospace;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--stamp-red);
+  pointer-events: none;
+  transition: left 300ms var(--ease-out), top 300ms var(--ease-out);
+}
+.hb-note::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 2px;
+  height: 0.55rem;
+  margin-left: -1px;
+  background: var(--stamp-red);
+}
+.hb-note[data-side="above"]::after { top: 100%; }
+.hb-note[data-side="below"]::after { bottom: 100%; }
+.hb-note-neutral { border-color: var(--ink); color: var(--ink); }
+.hb-note-neutral::after { background: var(--ink); }
+.hb-cmp:not(.is-in) .hb-note { opacity: 0; }
+.hb-cmp.is-in .hb-note { animation: lt-fade 260ms ease-out 600ms both; }
+
+/* ---------- Light table ---------- */
+.lt {
+  background: var(--lt-bg);
+  color: var(--lt-text);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.lt-dim { color: var(--lt-dim); }
+.lt-photo {
+  position: relative;
+  overflow: hidden;
+  background: var(--lt-raise);
+  border: 1px solid var(--lt-line);
+}
+@keyframes lt-sweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.lt-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 70%, rgba(255, 210, 122, 0.16) 97%, rgba(255, 210, 122, 0.55) 100%);
+  border-right: 2px solid var(--lt-scan);
+  box-shadow: 2px 0 14px rgba(255, 210, 122, 0.7);
+  animation: lt-sweep 1500ms cubic-bezier(0.45, 0, 0.35, 1) infinite;
+}
+.lt-scan-once { animation-iteration-count: 1; animation-fill-mode: forwards; }
+.lt-scan-hold { transform: translateX(120%); animation: none; opacity: 0; }
+@keyframes lt-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.lt-photo img { animation: lt-fade 260ms ease-out both; }
+.lt-ret {
+  position: absolute;
+  pointer-events: none;
+  --ret: var(--lt-red);
+  --bw: 2px;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.8));
+  animation: hb-lock 380ms var(--ease-out) both;
+}
+.lt-ret i {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  min-width: 0.4rem;
+  min-height: 0.4rem;
+  border: 0 solid var(--ret);
+}
+.lt-ret i:nth-child(1) { top: 0; left: 0; border-top-width: var(--bw); border-left-width: var(--bw); }
+.lt-ret i:nth-child(2) { top: 0; right: 0; border-top-width: var(--bw); border-right-width: var(--bw); }
+.lt-ret i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: var(--bw); border-left-width: var(--bw); }
+.lt-ret i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: var(--bw); border-right-width: var(--bw); }
+.lt-ret-calm { --ret: rgba(240, 233, 216, 0.75); }
+.lt-cell {
+  position: relative;
+  min-height: 3.5rem;
+  border: 1px solid var(--lt-line);
+  background: var(--lt-raise);
+  overflow: hidden;
+}
+.lt-cell[data-state="now"] { border-color: var(--lt-scan); box-shadow: 0 0 0 1px var(--lt-scan); }
+.lt-cell[data-state="todo"] img { opacity: 0.28; }
+.lt-cell[data-state="done"] img { opacity: 0.85; }
+.lt-tag {
+  border-left: 4px solid var(--lt-dim);
+  background: var(--lt-raise);
+  padding: 0.4rem 0.65rem;
+}
+.lt-tag[data-hit="true"] { border-left-color: var(--lt-red); }
+@keyframes lt-stamp {
+  0% { transform: scale(1.7) rotate(-2deg); opacity: 0; }
+  60% { transform: scale(0.97); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.lt-land { animation: lt-stamp 300ms var(--ease-out) both; }
+.lt-chip {
+  display: inline-block;
+  padding: 0 0.4rem;
+  border: 1.5px solid currentColor;
+  font-family: var(--font-typewriter-face), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ---------- Settled ceremony ---------- */
+@keyframes hb-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.hb-rule-draw { transform-origin: left; animation: hb-draw 500ms var(--ease-out) var(--d, 0ms) both; }
+
+/* ---------- Capture instrument ---------- */
+@keyframes hb-flash {
+  0% { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+.cap-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: #fff;
+  pointer-events: none;
+  animation: hb-flash 240ms ease-out both;
+}
+.cap-corner {
+  position: absolute;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 0 solid var(--paper);
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
+  animation: hb-lock 420ms var(--ease-out) both;
+}
+.cap-corner[data-pos="tl"] { top: 0.75rem; left: 0.75rem; border-top-width: 3px; border-left-width: 3px; }
+.cap-corner[data-pos="tr"] { top: 0.75rem; right: 0.75rem; border-top-width: 3px; border-right-width: 3px; }
+.cap-corner[data-pos="bl"] { bottom: 0.75rem; left: 0.75rem; border-bottom-width: 3px; border-left-width: 3px; }
+.cap-corner[data-pos="br"] { bottom: 0.75rem; right: 0.75rem; border-bottom-width: 3px; border-right-width: 3px; }
+.cap-return .cap-corner { border-color: #ffb3a8; }
+.cap-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, transparent calc(33.333% - 0.5px), rgba(246, 241, 227, 0.22) calc(33.333% - 0.5px), rgba(246, 241, 227, 0.22) calc(33.333% + 0.5px), transparent calc(33.333% + 0.5px), transparent calc(66.666% - 0.5px), rgba(246, 241, 227, 0.22) calc(66.666% - 0.5px), rgba(246, 241, 227, 0.22) calc(66.666% + 0.5px), transparent calc(66.666% + 0.5px)),
+    linear-gradient(to bottom, transparent calc(33.333% - 0.5px), rgba(246, 241, 227, 0.22) calc(33.333% - 0.5px), rgba(246, 241, 227, 0.22) calc(33.333% + 0.5px), transparent calc(33.333% + 0.5px), transparent calc(66.666% - 0.5px), rgba(246, 241, 227, 0.22) calc(66.666% - 0.5px), rgba(246, 241, 227, 0.22) calc(66.666% + 0.5px), transparent calc(66.666% + 0.5px));
+}
+.cap-hud {
+  position: absolute;
+  left: 3rem;
+  right: 3rem;
+  top: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-typewriter-face), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--paper);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+.cap-shutter {
+  position: relative;
+  width: 4.75rem;
+  height: 4.75rem;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 5px var(--paper), 0 0 0 7px var(--ink);
+  transition: transform 100ms ease-out;
+}
+.cap-shutter:active:not(:disabled) { transform: scale(0.93); }
+.cap-shutter:disabled { opacity: 0.4; }
+.cap-shutter span {
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: 50%;
+  background: var(--stamp-red);
+  transition: transform 100ms ease-out;
+}
+.cap-shutter:active:not(:disabled) span { transform: scale(0.82); }
+.cap-cell {
+  position: relative;
+  overflow: hidden;
+}
+.cap-cell-thumb {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.55;
+}
+
+/* ---------- Hold diagram ---------- */
+.hb-flow-line { stroke: var(--ink); stroke-width: 2; fill: none; stroke-dasharray: 5 4; }
