@@ -1,6 +1,6 @@
 # Handback: the deposit that settles itself
 
-Hosted demo: TBD
+Hosted demo: https://handback-u6bl.onrender.com (PayPal sandbox, so no real money moves. It runs on Render's free plan, so the first visit after a quiet spell can take about a minute to wake up, and data resets on restart.)
 Demo video: TBD
 
 Handback is for people who lend or rent out things (cameras, tools, e-bikes, party gear, instruments) and for the people who borrow them. The renter places a PayPal hold, both sides get a photo record of the item at pickup and return, and an AI compares the photos so the hold is released, or partly captured, for an amount anyone can check line by line.
