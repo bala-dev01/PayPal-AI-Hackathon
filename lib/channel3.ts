@@ -28,7 +28,11 @@ export async function lookupReplacementPrice(query: string, apiKey: string): Pro
       signal: AbortSignal.timeout(8000),
       cache: "no-store",
     });
-    if (!res.ok) return { cents: null };
+    if (!res.ok) {
+      // Status only, never the key: makes a rejected or rate-limited key visible in the host logs.
+      console.warn(`Channel3 search failed with HTTP ${res.status}`);
+      return { cents: null };
+    }
     const data = (await res.json()) as { products?: Product[] };
     for (const product of data.products ?? []) {
       const prices = (product.offers ?? [])
@@ -42,7 +46,8 @@ export async function lookupReplacementPrice(query: string, apiKey: string): Pro
       return { cents: mid.cents, source: `Channel3${mid.domain ? `, ${mid.domain}` : ""}`, title: product.title };
     }
     return { cents: null };
-  } catch {
+  } catch (e) {
+    console.warn(`Channel3 search error: ${e instanceof Error ? e.name : "unknown"}`);
     return { cents: null };
   }
 }

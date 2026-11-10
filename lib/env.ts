@@ -4,7 +4,11 @@ import { z } from "zod/v4";
 const optional = z
   .string()
   .optional()
-  .transform((v) => (v && v.trim() !== "" ? v.trim() : undefined));
+  .transform((v) => {
+    // Dashboards keep quotes pasted from a .env line ("abc"), so drop one matching pair.
+    const t = v?.trim().replace(/^(["'])(.*)\1$/, "$2").trim();
+    return t ? t : undefined;
+  });
 
 const schema = z.object({
   PAYPAL_CLIENT_ID: optional,
