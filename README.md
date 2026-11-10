@@ -44,8 +44,8 @@ Checkout uses the PayPal JS SDK (buttons) in the browser. The client secret neve
 ## Sponsor tools actually used
 
 - **AG Grid**: the owner rentals ledger (`/owner`).
-- **Render**: deployable to Render with the included `render.yaml`.
-- **Channel3**: replacement-price lookup on the new-rental form. Used only when `CHANNEL3_API_KEY` is set; otherwise the owner enters the value.
+- **Render**: the hosted demo runs on Render, deployed from the included `render.yaml` Blueprint.
+- **Channel3**: the **Look up current price** button on the new-rental form searches Channel3's product catalog for the item and fills in the replacement value with a mid-range store price and its source (for example "Channel3, adorama.com"). Damage is priced as a share of that value. It's switched on in the hosted demo. Locally it needs `CHANNEL3_API_KEY`; without one the owner types the value in.
 
 Bryntum is not used.
 
